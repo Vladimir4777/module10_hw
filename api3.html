@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <style>
+        .hidden{
+            display: none;
+        }
+        .link {
+            display: inline-block;
+            width: 150px;
+            margin: 5px;
+            padding: 10px 5px;
+            border-radius: 0.25rem;
+            border: 2px solid #315efb;
+            background-color: #315efb;
+            text-decoration: none;
+            text-align: center;
+            font-size: 15px;
+            color: white;
+            
+            transition: 0.3s;
+            
+        }
+        .link:hover{
+            box-shadow: 0px 2px 8px 2px rgba(141,150,178,.3);
+            transform: scale(1.05);
+        }
+        .span{
+            color: green;
+        }
+        .block {
+            border: 2px solid #315efb;
+            border-radius: 0.25rem;
+            width: 200px;
+            margin: 5px;
+            padding: 5px;
+        }
+        .output {
+            border: 3px solid #315efb;
+            width: 620px;
+            height: 550px;
+            border-radius: 0.25rem;
+        }
+        input {
+            width: 300px;
+            height: calc(2.25rem + 2px);
+            padding: 0.375rem 0.75rem;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #212529;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 2px solid #315efb;
+            border-radius: 0.25rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+        button {
+            padding: 0;
+            background-color: transparent;
+            border: none;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+            box-shadow: none;
+            cursor: pointer;
+            width: 130px;
+            height: 40px;
+            margin: 20px 10px;
+            padding: 5px 5px; 
+            border-radius: 1px;
+            font-size: 15px;
+            line-height: 15px;  
+            color: white;
+            background: #315efb;
+            transition: 0.3s;
+        }
+        button:hover {
+            box-shadow: 0px 2px 8px 2px rgba(141,150,178,.3);
+            transform: scale(1.05);
+        }
+    </style>
+    <input type="text" name="" id="input" placeholder="Введите текст сообщения.">
+    <button class="btn">Отправить</button>
+    <button class="geo">Гео-локация</button>
+    <div class="output"><a href="" id='link' class="hidden"></a></div>
+    
+    <script>
+
+        const wsUrl = 'wss://echo-ws-service.herokuapp.com';
+        const output = document.querySelector('.output');
+        const btn = document.querySelector('.btn');
+        const geo = document.querySelector('.geo');
+        const input = document.querySelector('#input');
+        const link = document.querySelector('#link');
+
+        let websocket;
+
+        function writeMessage (message) {
+            let text = document.createElement('p');
+            let block = document.createElement('div');
+            block.classList.add('block');
+            text.innerHTML = message;
+            output.appendChild(block);
+            block.appendChild(text);
+        }
+
+        function openСompound () {
+            websocket = new WebSocket(wsUrl);
+            websocket.onopen = function (evt) {
+                console.log('connect')
+            }
+            websocket.onclose = function(evt) {
+                console.log('disconnect')
+            }
+            websocket.onmessage = function(evt) {
+                writeMessage(
+                    `<span class='span';'>Ответ: ${evt.data} </span>`
+                );
+            };
+            websocket.onerror = function(evt){
+                console.log('error')
+            }
+        }
+
+        openСompound();
+
+        btn.addEventListener('click', () => {
+            const message = input.value;
+            writeMessage(`Сообщение: ${message}`)
+            websocket.send(message);
+        });
+
+        const success = (position) => {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            link.href = `https://www.openstreetmap.org/#map=18/${latitude}/${longitude}`;
+            link.textContent = 'Местоположение'
+        }
+
+        geo.addEventListener('click', () => {
+            link.href = '';
+            if(!navigator.geolocation){
+                const status = document.createElement('p');
+                status.textContent = 'Geolocation не поддерживается вашим браузером'
+            }else {
+                status.textContent = 'Оределение местоположения...';
+                navigator.geolocation.getCurrentPosition(success);
+                link.textContent = 'Загрузка местоположения....'
+                link.classList.toggle('hidden');
+                link.classList.toggle('link');
+            }
+        })
+
+    </script>
+</body>
+</html>

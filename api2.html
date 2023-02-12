@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <style>
+        button {
+            padding: 0;
+            background-color: transparent;
+            border: none;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+            box-shadow: none;
+            cursor: pointer;
+            
+            display: flex;
+            margin: 20px 10px;
+            padding: 10px 30px; 
+            border-radius: 1px;
+            font-size: 15px;
+            line-height: 15px;  
+            color: white;
+            background: #315efb;
+            transition: 0.3s;
+        }
+        button:hover {
+            box-shadow: 0px 2px 8px 2px rgba(141,150,178,.3);
+            transform: scale(1.05);
+        }
+    </style>
+    <button>Click!</button>
+    <script>
+
+        const btn = document.querySelector('button');
+        btn.addEventListener('click', function(){
+            let width = window.innerWidth;
+            let height = window.innerHeight;
+            alert(`Размер экрана: ${width} x ${height}`);
+            
+        })
+
+    </script>
+</body>
+</html>
